@@ -73,13 +73,13 @@ exports.addAmount = async (username, data, type) => {
    
         //update yearly expenditure
         res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Yearly${existingYear.length!==0?`?telegram_id=eq.${username}&year=eq.${year}`:``}`, {
-            method: existingMonth.length!==0?"PATCH":"POST",
+            method: existingYear.length!==0?"PATCH":"POST",
             headers:{...head,
                 "Prefer":"resolution=merge-duplicates"        
             },
             body:JSON.stringify({
                 telegram_id:username,
-                amount:existingMonth.length!==0?parseFloat(existingMonth[0].amount)+parseFloat(data):data,
+                amount:existingYear.length!==0?parseFloat(existingYear[0].amount)+parseFloat(data):data,
                 year
             })
         })
