@@ -15,8 +15,12 @@ bot.onText(/\/start/,async (msg,match)=>{
     const check = await checkUser(msg.from.username)
     if(!check){
         const res =await createUser(msg.from)
-        if(res) {bot.sendMessage(chatId,'Account Created Successfully')}
-        else {bot.sendMessage(chatId,"Some Error Occuered")}
+        if(res){
+                bot.sendMessage(chatId,'Account Created Successfully')
+            }
+        else{
+            bot.sendMessage(chatId,"Some Error Occuered")
+        }
     }
     else{
         bot.sendMessage(chatId,"Welcome Back!!")
