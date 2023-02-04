@@ -1,6 +1,26 @@
+const express = require('express')
+const app = express()
+const userRouter = require('./Routes/Routes')
+const cors = require('cors')
 const TelegramBot = require('node-telegram-bot-api');
 const { checkUser, createUser, addAmount } = require('./apis');
+const { options } = require('./Routes/Routes')
 require('dotenv').config()
+
+app.use(cors({
+    origin:'*'
+}))
+app.use(express.json())
+
+app.use('/user',userRouter)
+
+app.listen(5000,()=>{
+    console.log("Server Running")
+})
+
+
+
+
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TELEGRAM_BOT;
