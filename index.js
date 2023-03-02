@@ -19,9 +19,6 @@ app.listen(5000,()=>{
 })
 
 
-
-
-
 // replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TELEGRAM_BOT;
 
@@ -48,6 +45,15 @@ bot.onText(/\/start/,async (msg,match)=>{
     bot.sendMessage(chatId,"To log expenditure, enter : /category amount\n\nExample '/food 120'\n\n👆This conveys that you have spent Rs.120 on food🥘\n\nYou can find the categories in the menu or just type '/' .Enjoy!! 😎")
 })
 
+bot.onText(/\/pwd/,async(msg,match)=>{
+    const chatId = msg.from.id
+    const user = msg.from.username
+    if(!user) bot.sendMessage(chatId,"It seems you are using telegram without username. Please add username to continue")
+    else{
+        
+    }
+})
+
 bot.onText(/\/(.+)/,async(msg,match)=>{
     const chatId = msg.from.id
     const type = match[1].split(' ')[0]
@@ -67,6 +73,15 @@ bot.onText(/\/(.+)/,async(msg,match)=>{
     else{
         bot.sendMessage(chatId,'Invalid Choice')
     }
-    // console.log(msg,match)
     
 })
+
+bot.onText(/\/spent (.+)/,(msg,match)=>{
+    console.log(msg,match)
+    bot.sendMessage(msg.from.id,"Choose a category",{
+        "reply_markup":{
+            "keyboard":arr.map((x)=>[x])
+        }
+    })
+})
+
