@@ -4,5 +4,6 @@ const Router = express()
 
 Router.post('/userdata',getAlldata)
 
-module.exports= Router
+
+module.exports = Router
 

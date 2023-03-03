@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express()
 const userRouter = require('./Routes/Routes')
+const loginRouter = require('./Routes/login')
 const cors = require('cors')
 const TelegramBot = require('node-telegram-bot-api');
-const { checkUser, createUser, addAmount } = require('./apis');
+const { checkUser, createUser, addAmount, generatePassword } = require('./apis');
 const { options } = require('./Routes/Routes')
 require('dotenv').config()
 
@@ -12,7 +13,11 @@ app.use(cors({
 }))
 app.use(express.json())
 
+// app.use('/',async(req,res)=>{
+//     res.send("Heheh")
+// })
 app.use('/user',userRouter)
+app.use('/action',loginRouter)
 
 app.listen(5000,()=>{
     console.log("Server Running")
@@ -50,7 +55,10 @@ bot.onText(/\/pwd/,async(msg,match)=>{
     const user = msg.from.username
     if(!user) bot.sendMessage(chatId,"It seems you are using telegram without username. Please add username to continue")
     else{
-        
+        const res = await generatePassword(user)
+        if(res.status){
+            bot.sendMessage(chatId,`Your OTP is : ${res.password    }`)
+        }
     }
 })
 
@@ -69,7 +77,7 @@ bot.onText(/\/(.+)/,async(msg,match)=>{
             else bot.sendMessage(chatId,'Some Error Occured')
     }
     }
-    else if(type==="start"){}
+    else if(type==="start"|| type ==="pwd"){}
     else{
         bot.sendMessage(chatId,'Invalid Choice')
     }

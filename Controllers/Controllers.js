@@ -43,3 +43,10 @@ exports.getAlldata = async (req, res) => {
     }
 
 }
+
+
+exports.handleLogin = async (req,res) => {
+    const {userid,password} = req.body
+    if(!userid || !password) return res.status(400).json({status:false,msg:"No Id / Password"})
+    res.status(200).json({status:true,msg:"Hehehehe Siuuu"})
+}

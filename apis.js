@@ -1,4 +1,5 @@
 const dateFunction = require('./helpers/datefunction')
+const moment = require('moment')
 
 require('dotenv').config()
 
@@ -32,6 +33,28 @@ exports.createUser = async (data) => {
     catch (err) {
         console.error(err)
         return false
+    }
+}
+
+exports.generatePassword = async (username) => {
+    try{
+        const password = (Math.random()+1).toString(36).substring(2)
+        payload = {password,passwordCreatedAt:moment().format()}
+        console.log(payload)
+        const res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Profiles?telegram_id=eq.${username}`,{
+            method:"PATCH",
+            headers:{
+                ...head,
+                "Prefer":"return=minimal"
+            },
+            body:JSON.stringify(payload)
+        })
+        // const result = await res.json()
+        return {status:true,password}
+    }
+    catch(err){
+        console.log(err)
+        return {status:false}
     }
 }
 
