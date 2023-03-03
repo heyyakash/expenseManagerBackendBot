@@ -37,24 +37,24 @@ exports.createUser = async (data) => {
 }
 
 exports.generatePassword = async (username) => {
-    try{
-        const password = (Math.random()+1).toString(36).substring(2)
-        payload = {password,passwordCreatedAt:moment().format()}
+    try {
+        const password = (Math.random() + 1).toString(36).substring(2)
+        payload = { password, passwordCreatedAt: moment().format() }
         console.log(payload)
-        const res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Profiles?telegram_id=eq.${username}`,{
-            method:"PATCH",
-            headers:{
+        const res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Profiles?telegram_id=eq.${username}`, {
+            method: "PATCH",
+            headers: {
                 ...head,
-                "Prefer":"return=minimal"
+                "Prefer": "return=minimal"
             },
-            body:JSON.stringify(payload)
+            body: JSON.stringify(payload)
         })
         // const result = await res.json()
-        return {status:true,password}
+        return { status: true, password }
     }
-    catch(err){
+    catch (err) {
         console.log(err)
-        return {status:false}
+        return { status: false }
     }
 }
 
@@ -64,45 +64,47 @@ exports.addAmount = async (username, data, type) => {
         const { year, month, date } = dateFunction();
         //get Monthly amount
 
-        let existingMonth = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Monthy?telegram_id=eq.${username}&month=eq.${month}`,{
-            headers:head
+        let existingMonth = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Monthy?telegram_id=eq.${username}&month=eq.${month}`, {
+            headers: head
         })
         existingMonth = await existingMonth.json();
-        let existingYear = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Yearly?telegram_id=eq.${username}&year=eq.${year}`,{headers:head})
+        let existingYear = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Yearly?telegram_id=eq.${username}&year=eq.${year}`, { headers: head })
         existingYear = await existingYear.json();
-        console.log(existingMonth,existingYear)
+        console.log(existingMonth, existingYear)
 
-        
+
         // add new entry
         let res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_All`, {
             method: "POST",
-            headers:head,
-            body: JSON.stringify({ date,amount:data, month, year, telegram_id: username,category:type })
+            headers: head,
+            body: JSON.stringify({ date, amount: data, month, year, telegram_id: username, category: type })
         })
-       
+
         //update monthly expenditure
-        res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Monthy${existingMonth.length!==0?`?telegram_id=eq.${username}&month=eq.${month}`:``}`, {
-            method: existingMonth.length!==0?"PATCH":"POST",
-            headers:{...head,
-                "Prefer":"return=minimal"
+        res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Monthy${existingMonth.length !== 0 ? `?telegram_id=eq.${username}&month=eq.${month}` : ``}`, {
+            method: existingMonth.length !== 0 ? "PATCH" : "POST",
+            headers: {
+                ...head,
+                "Prefer": "return=minimal"
             },
-            body:JSON.stringify({
-                telegram_id:username,
+            body: JSON.stringify({
+                telegram_id: username,
                 month,
-                amount:existingMonth.length!==0?parseFloat(existingMonth[0].amount)+parseFloat(data):data,
+                amount: existingMonth.length !== 0 ? parseFloat(existingMonth[0].amount) + parseFloat(data) : data,
                 year
             })
         })
-   
+
         //update yearly expenditure
-        res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Yearly${existingYear.length!==0?`?telegram_id=eq.${username}&year=eq.${year}`:``}`, {
-            method: existingYear.length!==0?"PATCH":"POST",
-            headers:{...head,
-                "Prefer":"resolution=merge-duplicates"        
+        res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Yearly${existingYear.length !== 0 ? `?telegram_id=eq.${username}&year=eq.${year}` : ``}`, {
+            method: existingYear.length !== 0 ? "PATCH" : "POST",
+            headers: {
+                ...head,
+                "Prefer": "resolution=merge-duplicates"
             },
-            body:JSON.stringify({
-                telegram_id:username,
-                amount:existingYear.length!==0?parseFloat(existingYear[0].amount)+parseFloat(data):data,
+            body: JSON.stringify({
+                telegram_id: username,
+                amount: existingYear.length !== 0 ? parseFloat(existingYear[0].amount) + parseFloat(data) : data,
                 year
             })
         })
@@ -112,5 +114,18 @@ exports.addAmount = async (username, data, type) => {
     catch (err) {
         console.log(err)
         return false
+    }
+}
+
+exports.checkId = async (username) => {
+    try {
+        const res = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Profiles?telegram_id=eq.${username}`, {
+            method: "GET",
+            headers: head
+        })
+        const result = await res.json()
+        return result
+    } catch (error) {
+        return error
     }
 }

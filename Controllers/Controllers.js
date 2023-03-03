@@ -1,3 +1,5 @@
+const { checkId } = require('../apis')
+const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 const head = {
@@ -48,5 +50,13 @@ exports.getAlldata = async (req, res) => {
 exports.handleLogin = async (req,res) => {
     const {userid,password} = req.body
     if(!userid || !password) return res.status(400).json({status:false,msg:"No Id / Password"})
-    res.status(200).json({status:true,msg:"Hehehehe Siuuu"})
+    const check = await checkId(userid)
+    if(check.length===0) return res.status(200).json({status:false,msg:"Account does not exist"})
+    const {first_name,last_name,telegram_id} = check[0]
+    if(password!==check[0].password) return res.status(200).json({status:false,msg:"Invalid Credentials"})
+    const token = jwt.sign({id:check.id,telegram_id},process.env.JWT)
+    res.status(200).json({status:true,msg:"Signed In",token,first_name,last_name,telegram_id})
+    // res.status(200).json({status:false,msg:"Hehehehe Siuuu"})
 }
+
+
