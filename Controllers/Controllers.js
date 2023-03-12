@@ -28,7 +28,7 @@ exports.getAlldata = async (req, res) => {
         const resultDailyCurrentMonth = await resCurrentMonthly.json();
 
 
-        const resMonthly = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Monthy?telegram_id=eq.${user}&month=eq.${month}&year=eq.${year}`,
+        const resMonthly = await fetch(`https://srhzlwxqryucqsogslue.supabase.co/rest/v1/Expenditure_Monthy?telegram_id=eq.${user}&year=eq.${year}`,
             { headers: head })
         const resultMonthly = await resMonthly.json()
 
